@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaxiReg - Új autó hozzáadása</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="header">
+    <h1 class="cars-title">Új autó hozzáadása</h1>
+    <a href="cars.html" class="header-btnred">Mégse</a>   
+</div>   
+
+<form class="form" id="form">
+    <div class="form-group">
+        <label>Márka</label>
+        <select id="brand"></select>
+    </div>
+
+    <div class="form-group">
+        <label>Modell</label>
+        <input id="model" type="text">
+    </div>
+
+    <div class="form-group">
+        <label>Tulajdonos</label>
+        <input type="text" id="owner">
+    </div>
+
+    <div class="form-group">
+        <label>Üzembe helyezés</label>
+        <input type="date" id="date">
+    </div>
+
+    <div class="form-group">
+        <label>Energiaforrás</label>
+
+        <label>
+            <input type="radio" name="fuel" value="fuel">
+            Benzin/Dízel
+        </label>
+
+        <label>
+            <input type="radio" name="fuel" value="electric">
+            Elektromos
+        </label>
+    </div>
+
+    <div class="form-group" id="fuelUseGroup">
+        <label>Fogyasztás</label>
+        <input type="number" id="fuelUse" min="0" step="0.1">
+    </div>
+
+    <button type="submit" class="btn">Mentés</button>
+</form>
+
+<script src="app.js"></script>
+
+<script>
+    const neptun = getNeptun();
+    if (!neptun) window.location.href = 'index.html';
+
+    fillBrandSelect('brand');
+
+    document.querySelectorAll('input[name="fuel"]').forEach(radio => {
+        radio.addEventListener('change', function () {
+            const fuelUseGroup = document.getElementById('fuelUseGroup');
+            if (this.value === 'electric') {
+                fuelUseGroup.style.display = 'none';
+            } else {
+                fuelUseGroup.style.display = '';
+            }
+        });
+    });
+
+    document.getElementById('form').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const brand = document.getElementById('brand').value;
+        const model = document.getElementById('model').value.trim();
+        const owner = document.getElementById('owner').value.trim();
+        const dayOfCommission = document.getElementById('date').value;
+        const selectedFuel = document.querySelector('input[name="fuel"]:checked');
+        const electric = selectedFuel ? selectedFuel.value === 'electric' : false;
+        const fuelUse = parseFloat(document.getElementById('fuelUse').value);
+
+        if (!model) {
+            alert('A modell megadása kötelező!');
+            return;
+        }
+
+        if (!owner.includes(' ')) {
+            alert('A tulajdonos névnek legalább egy szóközt kell tartalmaznia!');
+            return;
+        }
+
+        if (!dayOfCommission) {
+            alert('Az üzembe helyezés dátumának megadása kötelező!');
+            return;
+        }
+
+        if (!selectedFuel) {
+            alert('Az energiaforrás kiválasztása kötelező!');
+            return;
+        }
+
+        if (!electric && (!fuelUse || fuelUse <= 0)) {
+            alert('Nem elektromos autónál a fogyasztásnak 0-nál nagyobbnak kell lennie!');
+            return;
+        }
+
+        const car = {
+            brand: brand,
+            model: model,
+            owner: owner,
+            dayOfCommission: dayOfCommission,
+            electric: electric,
+            fuelUse: electric ? 0 : fuelUse
+        };
+
+        createCar(neptun, car).then(() => {
+            alert('Autó sikeresen létrehozva!');
+            window.location.href = 'cars.html';
+        }).catch(err => {
+            console.error(err);
+            if (err.message && err.message.startsWith('Szerverhiba')) {
+                alert('Váratlan szerverhiba történt az autó mentésekor. Kérjük, próbáld újra!');
+            } else {
+                alert('Hiba: ' + err.message);
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

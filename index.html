@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaxiReg - Főoldal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="login-container">
+        <p class="login-title">Üdvözöljük a TaxiReg oldalán!</p>
+        <div class="bemutato-card">
+    A <strong>TaxiReg</strong> egy modern online platform, amely segíti az utasok és
+     taxisofőrök egymásra találását. Részletes adatbázist kínál a járművekről és 
+     sofőrökről, beleértve a műszaki adatokat, felszereltséget és értékeléseket. 
+     A személyre szabható keresési szűrők révén a felhasználók könnyen 
+     megtalálhatják az igényeiknek leginkább megfelelő taxit, így az utazás 
+     gyorsabb, kényelmesebb és biztonságosabb lesz.
+</div>
+
+        <div class="login-card">
+            <img src="https://nonstoptaxi.hu/wp-content/uploads/2021/11/nonstoptaxi-miskolc-viteldij-kalkulator-24x19.png"></img>
+            <p><strong>Add meg a Neptun kódodat a bejelentkezéshez!</strong></p>
+            <input type="text" id="neptun-input" placeholder="Neptun kód" maxlength="6">
+            <button id="login-btn">Bejelentkezés</button>
+        </div>
+    </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+    if(getNeptun()) {
+        window.location.href = "cars.html";
+    }
+    document.getElementById("login-btn").addEventListener("click", function() {
+        const code = document.getElementById('neptun-input').value.trim();
+
+        if (!code || !/^[A-Za-z0-9]{6}$/.test(code)) {
+            alert('Érvénytelen Neptun kód! (6 alfanumerikus karakter)');
+            return;
+        }
+
+        setNeptun(code);
+        window.location.href = 'cars.html';
+    }); 
+    </script>
+</body>
+</html>

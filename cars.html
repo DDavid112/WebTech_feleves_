@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaxiReg - Autók</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="header">
+    <h1 class="cars-title">Jelenlegi flottánk</h1>
+    <a href="add-car.html" class="header-btn">+ Autó hozzáadása</a>
+</div>
+
+<div id="car-list"></div>
+
+<script src="app.js"></script>
+<script>
+    const neptun = getNeptun();
+    if (!neptun) window.location.href = "index.html";
+
+    getCars(neptun).then(cars => {
+        const list = document.getElementById("car-list");
+        if (!cars || cars.length === 0) {
+            list.innerHTML = '<p style="padding:20px;color:var(--muted);">Még nincs egyetlen autó sem a flottában.</p>';
+            return;
+        }
+        cars.forEach(car => {
+            const div = document.createElement('div');
+            div.className = 'car-card';
+            div.innerHTML = `
+                <h2>${car.id + 1}. ${car.owner}</h2>
+                <div>Modell: ${car.brand} ${car.model}<br>
+                Fogyasztás: ${car.electric ? 'Elektromos' : Math.round(car.fuelUse * 10) / 10 + ' l/100km'}<br>
+                <a href="car.html?id=${car.id}" class="btn">Részletek →</a>
+                </div>
+            `;
+            list.appendChild(div);
+        });
+    }).catch(err => {
+        console.error(err);
+        document.getElementById("car-list").innerHTML = '<p style="padding:20px;color:var(--danger);">Hiba történt az autók betöltésekor. Kérjük, próbáld újra később!</p>';
+    });
+</script>
+</body>
+</html>

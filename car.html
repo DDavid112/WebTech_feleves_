@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaxiReg - Autó Részletek</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="car-detail"></div>
+    <script src="app.js"></script>
+    <script>
+        const neptun = getNeptun();
+
+        if (!neptun) {
+            window.location.href = 'index.html';
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');
+
+        if (!id) {
+            alert("Nincs autó kiválasztva.");
+            window.location.href = 'cars.html';
+        }
+
+        getCarDetails(neptun, id).then(car => {
+            document.getElementById('car-detail').innerHTML = `
+    <div class="car-detail-header">
+        <span class="car-id">#${car.id+1}</span>
+        <h1>${car.brand} ${car.model}</h1>
+       <a class="btn-edt" href="editcar.html?id=${car.id}">Módosítás</a>
+    </div>
+    <div class="car-detail-grid">
+        <div class="car-detail-item">
+            <span class="car-detail-label">Tulajdonos</span>
+            <span class="car-detail-value">${car.owner}</span>
+        </div>
+        <div class="car-detail-item">
+            <span class="car-detail-label">Üzembe helyezés ideje</span>
+            <span class="car-detail-value">${car.dayOfCommission}</span>
+        </div>
+        <div class="car-detail-item">
+            <span class="car-detail-label">Fogyasztás</span>
+            <span class="car-detail-value">${car.electric ? 'Elektromos' : Math.round(car.fuelUse*10)/10 + ' l/100km'}</span>
+        </div>
+        <div class="car-detail-item">
+            <span class="car-detail-label">Hajtás</span>
+            <span class="car-detail-value ${car.electric ? 'badge-electric' : 'badge-fuel'}">${car.electric ? 'Elektromos' : 'Benzin/Dízel'}</span>
+        </div>
+    </div>
+    <div class="btn-row">
+    <a class="btn" href="cars.html">← Vissza</a>
+    <button class="btn-trl" onclick="handleDelete()">Törlés</button>
+    </div>
+`;
+        }).catch(err => {
+            console.error(err);
+            alert('Hiba történt az autó adatainak betöltésekor. Kérjük, próbáld újra!');
+            window.location.href = 'cars.html';
+        });
+
+        function handleDelete() {
+            if (!confirm('Biztosan törölni szeretnéd ezt az autót?')) return;
+
+            deleteCar(neptun, id)
+                .then(() => {
+                    alert('Autó sikeresen törölve!');
+                    window.location.href = 'cars.html';
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert('Hiba történt a törlés során: ' + err.message);
+                });
+        }
+
+    </script>
+
+</body>
+</html>

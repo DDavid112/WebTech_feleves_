@@ -1,0 +1,211 @@
+/* style.css – TaxiReg */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Outfit', Arial, sans-serif;
+    background: #f4f5f7;
+    color: #1c2233;
+    min-height: 100vh;
+    line-height: 1.5;
+    font-size: 16px;
+}
+
+
+.navbar {
+    background: #1c2233;
+    padding: 0 24px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    gap: 35px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+.navbar-right { 
+    margin-left: auto;
+ }
+.hidden { 
+    display: none;
+ }
+
+.login-container {
+    min-height: calc(100vh - 60px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+}
+.login-title { 
+    font-size: 4rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+     }
+.bemutato-card { 
+    padding: 7px 57px; 
+    max-width: 923px; 
+}
+.login-card {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 48px 40px;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.13);
+}
+
+#neptun-input {
+    padding: 10px 14px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+    width: 160px;
+    transition: border-color 0.2s;
+}
+#neptun-input:focus {
+    outline: none;
+    border-color: #f5c518;
+    box-shadow: 0 0 0 3px rgba(245,197,24,0.15);
+}
+
+#login-btn {
+    background: #f5c518;
+    color: #1c2233;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 24px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 12px;
+    transition: background 0.2s;
+}
+#login-btn:hover { 
+    background: #d4a910; 
+}
+
+.btn,
+.btn-edt,
+.btn-trl,
+.header-btn,
+.header-btnred {
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.2s;
+}
+.btn { 
+    background: #f5c518; 
+    color: #1c2233; 
+}
+.btn:hover { 
+    background: #d4a910; 
+}
+.btn-edt { 
+    background: #6b7280; 
+    color: #e5e7eb; 
+}
+.btn-trl { 
+    background: #dc2626; 
+    color: #f4f5f7; 
+}
+.header-btn { 
+    background: #22c55e; 
+    color: #1c2233; 
+}
+.header-btnred { 
+    background: #ef4444; 
+    color: #f4f5f7; 
+}
+
+
+.header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 20px; 
+}
+.cars-title { 
+    font-size: 50px; 
+    padding: 20px; 
+}
+
+
+.car-card {
+    padding: 24px 32px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.13);
+    border: 2px solid #e5e7eb;
+}
+
+
+#car-detail {
+    max-width: 600px;
+    margin: 40px auto;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 32px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.13);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.car-detail-header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-top: 10px; 
+}
+.car-id { 
+    font-size: 1.3rem; 
+    color: #6b7280; 
+    font-weight: 600; 
+    padding: 15px; 
+}
+.car-detail-grid { 
+    display: contents; 
+}
+.car-detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: #f4f5f7;
+    padding: 12px 16px;
+}
+.car-detail-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #6b7280;
+}
+.car-detail-value { 
+    font-size: 1rem; 
+    font-weight: 500; 
+}
+.btn-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+.form {
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 45px;
+}
+.form-group { 
+    display: flex; 
+    flex-direction: column; 
+}

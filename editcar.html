@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaxiReg - Autó szerkesztése</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="header">
+    <h1 class="cars-title">Autó szerkesztése</h1>
+    <a id="back-btn" href="cars.html" class="header-btnred">← Vissza</a>
+</div>
+
+<form class="form" id="editForm">
+    <div class="form-group">
+        <label>Márka</label>
+        <select id="brand2"></select>
+    </div>
+    <div class="form-group">
+        <label>Modell</label>
+        <input id="model2" type="text">
+    </div>
+    <div class="form-group">
+        <label>Tulajdonos</label>
+        <input type="text" id="owner2">
+    </div>
+    <div class="form-group">
+        <label>Üzembe helyezés</label>
+        <input type="date" id="date2">
+    </div>
+    <div class="form-group">
+        <label>Energiaforrás</label>
+        <label><input type="radio" name="fuel2" value="fuel"> Benzin/Dízel</label>
+        <label><input type="radio" name="fuel2" value="electric"> Elektromos</label>
+    </div>
+    <div class="form-group" id="fuelUseGroup2">
+        <label>Fogyasztás</label>
+        <input type="number" id="fuelUse2" min="0" step="0.1">
+    </div>
+    <button type="submit" class="btn">Mentés</button>
+</form>
+
+<script src="app.js"></script>
+<script>
+    const neptun = getNeptun();
+    if (!neptun) window.location.href = 'index.html';
+
+    const carId = new URLSearchParams(window.location.search).get('id');
+    if (!carId) {
+        alert("Nincs autó kiválasztva.");
+        window.location.href = 'cars.html';
+    }
+
+    document.getElementById('back-btn').href = `car.html?id=${carId}`;
+
+    fillBrandSelect('brand2');
+
+    function getCheckedFuel() {
+        const checked = document.querySelector('input[name="fuel2"]:checked');
+        return checked ? checked.value : null;
+    }
+
+    function toggleFuelUse() {
+        const electric = getCheckedFuel() === 'electric';
+        document.getElementById('fuelUseGroup2').style.display = electric ? 'none' : '';
+        if (electric) document.getElementById('fuelUse2').value = '';
+    }
+
+    getCarDetails(neptun, carId)
+        .then(car => {
+            document.getElementById('brand2').value = car.brand;
+            document.getElementById('model2').value = car.model;
+            document.getElementById('owner2').value = car.owner;
+            document.getElementById('date2').value = car.dayOfCommission
+                ? car.dayOfCommission.substring(0, 10)
+                : '';
+
+            const fuelType = car.electric ? 'electric' : 'fuel';
+            document.querySelector(`input[name="fuel2"][value="${fuelType}"]`).checked = true;
+            document.getElementById('fuelUse2').value = car.electric ? '' : car.fuelUse;
+            toggleFuelUse();
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Hiba történt az adatok betöltésekor!');
+            window.location.href = 'cars.html';
+        });
+
+    document.querySelectorAll('input[name="fuel2"]').forEach(r =>
+        r.addEventListener('change', toggleFuelUse)
+    );
+
+    document.getElementById('editForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const brand           = document.getElementById('brand2').value;
+        const model           = document.getElementById('model2').value.trim();
+        const owner           = document.getElementById('owner2').value.trim();
+        const dayOfCommission = document.getElementById('date2').value;
+        const electric        = getCheckedFuel() === 'electric';
+        const fuelUse         = parseFloat(document.getElementById('fuelUse2').value);
+
+        if (!model) { alert('A modell megadása kötelező!'); return; }
+        if (!owner.includes(' ')) { alert('A tulajdonos névnek legalább egy szóközt kell tartalmaznia!'); return; }
+        if (!dayOfCommission) { alert('Az üzembe helyezés dátumának megadása kötelező!'); return; }
+        if (!getCheckedFuel()) { alert('Az energiaforrás kiválasztása kötelező!'); return; }
+        if (!electric && (!fuelUse || fuelUse <= 0)) { alert('Nem elektromos autónál a fogyasztásnak 0-nál nagyobbnak kell lennie!'); return; }
+
+        const carData = {
+            brand,
+            model,
+            owner,
+            dayOfCommission,
+            electric,
+            fuelUse: electric ? 0 : fuelUse
+        };
+
+        try {
+            await updateCar(neptun, carId, carData);
+            alert('Autó sikeresen módosítva!');
+            window.location.href = `car.html?id=${carId}`;
+        } catch (err) {
+            console.error(err);
+            if (err.message && err.message.startsWith('Szerverhiba')) {
+                alert('Váratlan szerverhiba történt a mentés során. Kérjük, próbáld újra!');
+            } else {
+                alert('Hiba történt a mentés során: ' + err.message);
+            }
+        }
+    });
+</script>
+</body>
+</html>
